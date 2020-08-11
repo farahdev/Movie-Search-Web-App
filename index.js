@@ -1,12 +1,11 @@
 const autoCompleteConfig = {
-  renderOption(movie){
+  renderOption(movie) {
     const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
     return `
     <img src="${imgSrc}" />
     ${movie.Title} (${movie.Year})
   `;
   },
-  
   inputValue(movie) {
     return movie.Title;
   },
@@ -67,31 +66,46 @@ let rightMovie;
    }
   };
 
-  const runComparision = () => {
-    
-  }
+ const runComparison = () => {
+  const leftSideStats = document.querySelectorAll(
+    '#left-summary.notification'
+  );
+  const rightSideStats = document.querySelectorAll(
+    '#right-summary.notification'
+  );
+
+  leftSideStats.forEach((leftStat, index) => {
+    const rightStat = rightSideStats[index];
+
+    const leftSideValue = leftStat.dataset.value;
+    const rightSideValue = rightStat.dataset.value;
+
+    if (rightSideValue > leftSideValue) {
+      leftStat.classList.remove('is-primary');
+      leftStat.classList.add('is-warning');
+    } else {
+      rightStat.classList.remove('is-primary');
+      rightStat.classList.add('is-warning');
+    }
+  });
+};
+
   const movieTemplate = movieDetail => {
    const dollars = parseInt(
      movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, '')
-     );
+  );
      const metascore = parseInt(movieDetail.Metascore);
     const imdbRating = parseFloat(movieDetail.imdbRating);
     const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''));
-
-
-    let count = 0;
-    const awards = movieDetail.Awards.split(' ').reduce((prev,word) => {
+    const awards = movieDetail.Awards.split(' ').reduce((prev, word) => {
       const value = parseInt(word);
-
-      if(isNaN(value)){
+    
+      if(isNaN(value)) {
         return prev;
       } else {
         return prev + value;
-        count = count + value;
-      }
-    }, 0);
-
-    console.log(awards);
+    }
+ }, 0);
   
     return `
       <article class="media">
@@ -108,6 +122,7 @@ let rightMovie;
           </div>
         </div>
       </article>
+      
       <article data-value=${awards} class="notification is-primary">
       <p class="title">${movieDetail.Awards}</p>
       <p class="subtitle">Awards</p>
